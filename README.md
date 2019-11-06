@@ -1,1 +1,1 @@
-# DIP_PROJECT
+# Fully Automated Panoramic Image Stitching
