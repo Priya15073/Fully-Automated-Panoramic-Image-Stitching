@@ -82,4 +82,5 @@ if __name__ == '__main__':
         for i in range(len(images) - 2):
             (result, Z) = stitch(images[len(images)-i-3], result, is_match=True)
 
+    cv2.imwrite("matchings.jpg",Z)
     cv2.imwrite(args["output"], result)
