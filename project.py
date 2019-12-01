@@ -3,6 +3,8 @@ from imutils import paths
 import numpy as np
 import argparse
 import imutils
+from math import *
+from statistics import *
 
 def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
@@ -84,11 +86,10 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
         vis[0:h2, 0:w2] = image2
         vis[0:h1, w2:] = image1
 
-        for ((trainIdx, queryIdx), s) in zip(matches, status):
-            if s == 1:
-                ptA = (int(key_points_2[queryIdx][0]), int(key_points_2[queryIdx][1]))
-                ptB = (int(key_points_1[trainIdx][0]) + w2, int(key_points_1[trainIdx][1]))
-                cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
+        for i in range(len(keypoints1update)):
+            ptA = (int(keypoints2update[i][0]), int(keypoints2update[i][1]))
+            ptB = (int(keypoints1update[i][0]) + w2, int(keypoints1update[i][1]))
+            cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
 
         return (result, vis)
 
