@@ -36,7 +36,7 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     #print(points1.shape)
     #print(points2.shape)
 
-    # Code for blending from scratch begins here
+    # Code for bundle adjustment from scratch begins here
     
     arr=[]
     optimaldistances=list()
@@ -57,7 +57,7 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     keypoints1update=list()
     keypoints2update=list()
     
-    # Appending the co-ordinates of the new points obtained after blending
+    # Appending the co-ordinates of the new points obtained after bundle adjustment
     for i in indexes:
         keypoints1update.append((points1[i][0],points1[i][1]))  
         keypoints2update.append((points2[i][0],points2[i][1]))
@@ -69,9 +69,9 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     prevlength=points1.shape[0]
     newlength=len(keypoints1update)
     print("Size of original key points: ",prevlength)
-    print("Size of optimal key points after blending ",newlength)
+    print("Size of optimal key points after bundle adjustment ",newlength)
 
-    # Code for blending ends here
+    # Code for bundle adjustment ends here
 
     val = image2.shape[1] + image1.shape[1]
     result = cv2.warpPerspective(image2, Homography, (val , image2.shape[0]))
