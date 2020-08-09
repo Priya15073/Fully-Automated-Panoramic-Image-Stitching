@@ -1,7 +1,8 @@
 # Fully Automated Panoramic Image Stitching
 This is our course project for the course Digital Image Processing in Monsoon 2019. 
 ____
-
+Reference Papaer:Automatic Panoramic Image Stitching using Invariant Features, Matthew Brown and David G. Lowe
+(http://matthewalunbrown.com/papers/ijcv2007.pdf)
 
 #### System Requirements
 * python3
