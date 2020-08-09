@@ -3,8 +3,6 @@ from imutils import paths
 import numpy as np
 import argparse
 import imutils
-from math import *
-from statistics import *
 
 def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     gray = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
@@ -38,8 +36,8 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
     #print(points1.shape)
     #print(points2.shape)
 
-    # Code for bundle adjustment from scratch begins here
-    
+    # Code for blending from scratch begins here
+
     arr=[]
     optimaldistances=list()
     removeddistances=list()
@@ -49,8 +47,8 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
         arr.append(d)
     std1=stdev(arr)                    # Finding standard deviation from the distances obtained
     m1=mean(arr)                       # Finding the mean of the array
-    indexes=[]                         # Creating an index array 
-    for i in range(len(arr)):           
+    indexes=[]                         # Creating an index array
+    for i in range(len(arr)):
         if(arr[i]>(m1 - 2*std1)):      # Defining a threshhold
             optimaldistances.append(arr[i])
             indexes.append(i)          # Appending the indexes of the key points that are relevant
@@ -58,22 +56,22 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
             removeddistances.append(arr[i])
     keypoints1update=list()
     keypoints2update=list()
-    
-    # Appending the co-ordinates of the new points obtained after bundle adjustment
+
+    # Appending the co-ordinates of the new points obtained after blending
     for i in indexes:
-        keypoints1update.append((points1[i][0],points1[i][1]))  
+        keypoints1update.append((points1[i][0],points1[i][1]))
         keypoints2update.append((points2[i][0],points2[i][1]))
-    
+
     print("The removed distances are: ")
     for i in range(len(removeddistances)):
         print(removeddistances[i])
-    
+
     prevlength=points1.shape[0]
     newlength=len(keypoints1update)
     print("Size of original key points: ",prevlength)
-    print("Size of optimal key points after bundle adjustment ",newlength)
+    print("Size of optimal key points after blending ",newlength)
 
-    # Code for bundle adjustment ends here
+    # Code for blending ends here
 
     val = image2.shape[1] + image1.shape[1]
     result = cv2.warpPerspective(image2, Homography, (val , image2.shape[0]))
@@ -86,10 +84,11 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
         vis[0:h2, 0:w2] = image2
         vis[0:h1, w2:] = image1
 
-        for i in range(len(keypoints1update)):
-            ptA = (int(keypoints2update[i][0]), int(keypoints2update[i][1]))
-            ptB = (int(keypoints1update[i][0]) + w2, int(keypoints1update[i][1]))
-            cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
+        for ((trainIdx, queryIdx), s) in zip(matches, status):
+            if s == 1:
+                ptA = (int(key_points_2[queryIdx][0]), int(key_points_2[queryIdx][1]))
+                ptB = (int(key_points_1[trainIdx][0]) + w2, int(key_points_1[trainIdx][1]))
+                cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
 
         return (result, vis)
 
@@ -98,7 +97,7 @@ def stitch(image1, image2, lowe_ratio=0.75, max_t=4.0, is_match=False):
 # Code for straightening from scratch starts here
 def straightening(result):
     #count=0
-    x,y,rgb=result.shape           
+    x,y,rgb=result.shape
     newresultx=[]
     newresulty=[]
     #print(len(result))
@@ -106,11 +105,11 @@ def straightening(result):
         for j in range(y):
             k=result[i,j]
             if(k[0]!=0 and k[1]!=0 and k[2]!=0):           # Find the portion where we have non zero pixel values
-                newresultx.append(i)                       # Add the corresponding x-coordinate            
+                newresultx.append(i)                       # Add the corresponding x-coordinate
                 newresulty.append(j)                       # Add the corresponding y-coordinate
     result=result[0:max(newresultx),0:max(newresulty)]     # Store the resized image in the result(removing the black portion)
     #print("-",len(result))
-    return result           
+    return result
 
     #print(count)
 
